@@ -65,3 +65,13 @@ with app.test_request_context():
     print(url_for('index'))
     print(url_for('login'))
     print(url_for('login', next='/'))
+
+#add_url_rule
+def home():
+    return "Homepage"
+app.add_url_rule('/home', 'home', home)
+
+if __name__ == '__main__':
+    host='127.0.0.1' # Set 0.0.0.0 to have server available externally
+    port=5000
+    app.run(host=host, port=port, debug=True) # Active debug for the server, it refreshes when there are updates
