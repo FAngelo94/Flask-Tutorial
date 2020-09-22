@@ -1,5 +1,5 @@
 from markupsafe import escape
-from flask import Flask, request, render_template,url_for
+from flask import Flask, request, render_template,url_for, redirect
 from flask_cors import CORS
 
 import ManageScript
@@ -22,7 +22,7 @@ def show_user_profile(username):
     # show the user profile for that user
     return 'User %s' % escape(username)
 
-@app.route('/post/<int:post_id>')
+@app.route('/post/<int:post_id>') #types we can use: string (default), int, float, path, any, uuid
 def show_post(post_id):
     # show the post with the given id, the id is an integer
     return 'Post %d' % post_id
@@ -53,7 +53,8 @@ def login():
 @app.route('/hello2/')
 @app.route('/hello2/<name>')
 def hello2(name=None):
-    return render_template('hello.html', name=name)
+    dict ={'phy':50,'che':60,'maths':70}
+    return render_template('hello.html', name=name, result=dict)
 
 @app.route('/runscript')
 def runscript():
@@ -70,6 +71,23 @@ with app.test_request_context():
 def home():
     return "Homepage"
 app.add_url_rule('/home', 'home', home)
+
+#redurect example
+@app.route('/admin')
+def hello_admin():
+    return 'Hello Admin'
+
+@app.route('/typeuser/<name>')
+def typeuser(name):
+    if(name == 'admin' ):
+        return redirect(url_for('hello_admin'))
+    else:
+        return "Basic User"
+
+# Use static script in template
+@app.route('/button/')
+def button():
+    return render_template('button.html')
 
 if __name__ == '__main__':
     host='127.0.0.1' # Set 0.0.0.0 to have server available externally
