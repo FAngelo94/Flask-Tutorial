@@ -1,5 +1,5 @@
 from markupsafe import escape
-from flask import Flask, request, render_template,url_for, redirect
+from flask import Flask, request, render_template,url_for, redirect,make_response, session, abort, flash
 from flask_cors import CORS
 
 import ManageScript
@@ -84,10 +84,59 @@ def typeuser(name):
     else:
         return "Basic User"
 
+# Error example
+@app.route('/error/')
+def error():
+    abort(401) #there are a lot of different code
+
 # Use static script in template
 @app.route('/button/')
 def button():
     return render_template('button.html')
+
+# Cookie example
+@app.route('/indexcookie')
+def indexcookie():
+    return render_template('setcookie.html')
+
+@app.route('/setcookie',methods=['POST','GET'])
+def setcookie():
+    if request.method == 'POST':
+        user = request.form['nm']
+        resp= make_response(render_template('readcookie.html'))
+        resp.set_cookie('userID',user)
+        return resp
+
+@app.route('/getcookie')
+def getcookie():
+    name = request.cookies.get('userID')
+    return '<h1>Welcome '+name+'</h1>'
+
+# Session example
+app.secret_key="key secret for session"
+@app.route('/setsession')
+def setsession():
+    session['username'] = 'Angelo'
+    return "session name set"
+
+@app.route('/getsession')
+def getsession():
+    if(session):
+        return "session name = " + session['username']
+    return "no username"
+
+@app.route('/deletesession')
+def deletesession():
+    session.pop('username', None)
+    return "session name deleted"
+
+# Message flashing example
+@app.route('/messageflashing/')
+def messageflashing():
+    flash("Test flash message")
+    return render_template('flash.html')
+
+
 
 if __name__ == '__main__':
     host='127.0.0.1' # Set 0.0.0.0 to have server available externally
