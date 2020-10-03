@@ -1,6 +1,6 @@
 from markupsafe import escape
 from flask import Flask, request, render_template,url_for, redirect,make_response, session, abort, flash
-from flask_cors import CORS
+from flask_cors import CORS #import to test GET/POST locally
 
 import ManageScript
 
@@ -135,8 +135,6 @@ def deletesession():
 def messageflashing():
     flash("Test flash message")
     return render_template('flash.html')
-
-
 
 if __name__ == '__main__':
     host='127.0.0.1' # Set 0.0.0.0 to have server available externally
