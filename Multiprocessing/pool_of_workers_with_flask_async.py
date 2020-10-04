@@ -22,7 +22,7 @@ def index():
     return 'Index Page'
 
 # Caching a function and use it
-@cache.memoize(300) #time in seconds
+# @cache.memoize(300) #time in seconds
 def messageflashing(x=1):
     print("message ",x,"-",os.getpid())
     j = 0
@@ -62,10 +62,11 @@ def usecachingfunctionwithworkerasync2(x):
     calc_x = str(messageflashing(x))
     cache.set("save", calc_x)
     pool = Pool(processes=4)
-    print(pool.map_async(messageflashing, range(x)))
+    pool.map_async(messageflashing, range(x))
     print("For the moment, the pool remains available for more work")
-    pool.close()
-    pool.join()
+    # Commenting the following 2 row the methods finish but workers run asyncronus
+    # pool.close()
+    # pool.join()
     print("Now the pool is closed and no longer available")
     print('X= ' + calc_x)
     return 'X= ' + calc_x
