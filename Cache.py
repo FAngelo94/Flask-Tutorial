@@ -2,7 +2,14 @@ from markupsafe import escape
 from flask import Flask, request, render_template,url_for, redirect,make_response, session, abort, flash
 from flask_caching import Cache
 
-cache = Cache(config={'CACHE_TYPE': 'simple'})
+config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "filesystem", # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300,
+    "CACHE_DIR": r"C:\Users\User\Desktop\Angelo\Project\Paxmile\Flask\mycache"
+}
+
+cache = Cache(config=config)
 
 app = Flask(__name__)
 cache.init_app(app)
@@ -12,7 +19,7 @@ def index():
     return 'Index Page'
 
 # Caching a function and use it
-@cache.memoize(50)
+@cache.memoize(300) #time in seconds
 def messageflashing(x=1):
     j = 0
     for i in range(1,100000000):
