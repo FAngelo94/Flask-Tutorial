@@ -24,14 +24,15 @@ def index():
 # Caching a function and use it
 @cache.memoize(300) #time in seconds
 def messageflashing(x=1):
-    print("message ",x)
+    print("message ",x,"-",os.getpid())
     j = 0
     for i in range(1,100000000):
         j += i
+    print("finished ",x,"-",os.getpid())
     return x*2
 
-@app.route('/usecachingfunction/<int:x>')
-def usecachingfunction(x):
+@app.route('/usecachingfunctionwithworker/<int:x>')
+def usecachingfunctionwithworker(x):
     print(cache.get("save"))
     calc_x = str(messageflashing(x))
     cache.set("save", calc_x)
@@ -41,6 +42,33 @@ def usecachingfunction(x):
     print("Now the pool is closed and no longer available")
     return 'X= ' + calc_x
 
+@app.route('/usecachingfunctionwithworkerasync/<int:x>')
+def usecachingfunctionwithworkerasync(x):
+    print(cache.get("save"))
+    calc_x = str(messageflashing(x))
+    cache.set("save", calc_x)
+    with Pool(processes=4) as pool:
+        print(pool.map_async(messageflashing, range(x)))
+        print("For the moment, the pool remains available for more work")
+        pool.close()
+        pool.join()
+    print("Now the pool is closed and no longer available")
+    print('X= ' + calc_x)
+    return 'X= ' + calc_x
+
+@app.route('/usecachingfunctionwithworkerasync2/<int:x>')
+def usecachingfunctionwithworkerasync2(x):
+    print(cache.get("save"))
+    calc_x = str(messageflashing(x))
+    cache.set("save", calc_x)
+    pool = Pool(processes=4)
+    print(pool.map_async(messageflashing, range(x)))
+    print("For the moment, the pool remains available for more work")
+    pool.close()
+    pool.join()
+    print("Now the pool is closed and no longer available")
+    print('X= ' + calc_x)
+    return 'X= ' + calc_x
 
 if __name__ == '__main__':
     host='127.0.0.1' # Set 0.0.0.0 to have server available externally
